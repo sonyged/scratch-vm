@@ -548,6 +548,8 @@ class Scratch3LooksBlocks {
 
     getBackdropNumberName (args) {
         const stage = this.runtime.getTargetForStage();
+        // Guard: stage may be undefined while a project is being (re)loaded
+        if (!stage) return '';
         if (args.NUMBER_NAME === 'number') {
             return stage.currentCostume + 1;
         }

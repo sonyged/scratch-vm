@@ -1830,14 +1830,16 @@ class Runtime extends EventEmitter {
             }
         }
         this.redrawRequested = false;
-        this._pushMonitors();
+        // Guard: no stage while a project is being (re)loaded or after dispose; don't execute anything
+        const hasStage = !!this.getTargetForStage();
+        if (hasStage) this._pushMonitors();
         if (this.profiler !== null) {
             if (stepThreadsProfilerId === -1) {
                 stepThreadsProfilerId = this.profiler.idByName('Sequencer.stepThreads');
             }
             this.profiler.start(stepThreadsProfilerId);
         }
-        const doneThreads = this.sequencer.stepThreads();
+        const doneThreads = hasStage ? this.sequencer.stepThreads() : [];
         if (this.profiler !== null) {
             this.profiler.stop();
         }
